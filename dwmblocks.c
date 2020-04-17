@@ -88,10 +88,20 @@ void getsigcmds(int signal)
 
 void setupsignals()
 {
+    struct sigaction sa, old;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_handler = sighandler;
+    sa.sa_flags = SA_RESTART;
+
 	for(int i = 0; i < LENGTH(blocks); i++)
 	{	  
 		if (blocks[i].signal > 0)
-			signal(SIGRTMIN+blocks[i].signal, sighandler);
+        {
+            int sig = SIGRTMIN+blocks[i].signal;
+            sigaction(sig, &sa, &old);
+            printf("Setup signal: %d\n", sig);
+			//signal(SIGRTMIN+blocks[i].signal, sighandler);
+        }
 	}
 
 }
